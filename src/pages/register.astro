@@ -2,8 +2,11 @@
 export const prerender = false;
 import Layout from "../layout/layout.astro";
 import RegisterForm from "../sections/register-form.astro";
+
+const url = new URL(Astro.request.url);
+const subdomain = url.hostname.split(".")[0];
 ---
 
 <Layout>
-  <RegisterForm />
+  <RegisterForm app={subdomain} />
 </Layout>

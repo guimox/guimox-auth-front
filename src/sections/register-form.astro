@@ -1,15 +1,9 @@
 ---
+const { app } = Astro.props;
+
 import ButtonGoogle from "../components/button-google.astro";
 import ErrorMessage from "../components/error-message.astro";
 import SuccessMessage from "../components/success-message.astro";
-
-const requestParam = new URLSearchParams(Astro.url.search);
-const pageTitle = await fetch(`http://localhost:8080/client?${requestParam}`);
-if (!pageTitle.ok) {
-  throw new Error(`Failed to fetch page title: ${pageTitle.toString()}`);
-}
-const result = await pageTitle.json();
-const appName = result?.appName;
 ---
 
 <section class="bg-gray-50 dark:bg-gray-900">
@@ -21,7 +15,7 @@ const appName = result?.appName;
         href="#"
         class="flex items-center text-2xl font-semibold text-gray-900 dark:text-white"
       >
-        {appName}
+        {app}
       </a>
     </div>
     <div
@@ -224,6 +218,7 @@ const appName = result?.appName;
 
       submitButton.disabled = true;
       submitButton.textContent = "Creating account...";
+      const { appName } = Astro.props;
 
       try {
         console.log("Registering user:", { name, email });
