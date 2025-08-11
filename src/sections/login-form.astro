@@ -1,13 +1,13 @@
 ---
 import ButtonGoogle from "../components/button-google.astro";
 
-const requestParam = new URLSearchParams(Astro.url.search);
-const pageTitle = await fetch(`http://localhost:8080/client?${requestParam}`);
-if (!pageTitle.ok) {
-  throw new Error(`Failed to fetch page title: ${pageTitle.toString()}`);
-}
-const result = await pageTitle.json();
-const appName = result?.appName;
+// const requestParam = new URLSearchParams(Astro.url.search);
+// const pageTitle = await fetch(`http://localhost:8080/client?${requestParam}`);
+// if (!pageTitle.ok) {
+//   throw new Error(`Failed to fetch page title: ${pageTitle.toString()}`);
+// }
+// const result = await pageTitle.json();
+const appName = "testing";
 
 if (Astro.request.method === "POST") {
   try {
