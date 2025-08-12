@@ -1,46 +1,46 @@
-# Astro Starter Kit: Basics
+# Guimox Auth Front
 
-```sh
-npm create astro@latest -- --template basics
+Guimox Auth Front is the frontend for a centralized authentication system, designed to provide secure user registration and login for all my apps. This project is built with [Astro](https://astro.build/) and integrates with the Guimox Auth API, which is deployed on a VPS.
+
+## Features
+
+- User registration with email and password
+- Login with email and password
+- Google authentication option
+- Form validation and error handling
+- Responsive and accessible UI
+- Integration with the Guimox Auth API
+
+## Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
 ├── public/
 │   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── layout/
+│   ├── pages/
+│   ├── sections/
+│   ├── styles/
+│   └── utils/
+├── .astro/
+├── dist/
+├── package.json
+├── astro.config.mjs
+├── tsconfig.json
+└── README.md
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Tech Stack
 
-## 🧞 Commands
+- [Astro](https://astro.build/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- TypeScript
 
-All commands are run from the root of the project, from a terminal:
+## API Integration
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+All authentication actions are handled via requests to the Guimox Auth API, which is hosted on a VPS. The frontend communicates with the API for user registration, login, and error handling.
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+##
