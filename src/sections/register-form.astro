@@ -1,6 +1,5 @@
 ---
 const { app } = Astro.props;
-
 import ButtonGoogle from "../components/button-google.astro";
 import ErrorMessage from "../components/error-message.astro";
 import SuccessMessage from "../components/success-message.astro";
@@ -13,6 +12,7 @@ import SuccessMessage from "../components/success-message.astro";
     <div class="flex flex-col items-center justify-center gap-2 mb-6">
       <a
         href="#"
+        id="app-name"
         class="flex items-center text-2xl font-semibold text-gray-900 dark:text-white"
       >
         {app}
@@ -218,7 +218,9 @@ import SuccessMessage from "../components/success-message.astro";
 
       submitButton.disabled = true;
       submitButton.textContent = "Creating account...";
-      const { appName } = Astro.props;
+
+      let appName = document.getElementById("app-name")?.textContent;
+      if (appName?.trim() === "localhost") appName = "guimox";
 
       try {
         console.log("Registering user:", { name, email });
@@ -230,11 +232,9 @@ import SuccessMessage from "../components/success-message.astro";
           body: JSON.stringify({
             email,
             password: passwordValue,
-            app: "IWodT4",
+            app: appName,
           }),
         });
-
-        console.log("result", result);
 
         if (!result.ok) {
           const errorResponse = await result.text();

@@ -1,48 +1,7 @@
 ---
+export const prerender = false;
+const { app: appName } = Astro.props;
 import ButtonGoogle from "../components/button-google.astro";
-
-// const requestParam = new URLSearchParams(Astro.url.search);
-// const pageTitle = await fetch(`http://localhost:8080/client?${requestParam}`);
-// if (!pageTitle.ok) {
-//   throw new Error(`Failed to fetch page title: ${pageTitle.toString()}`);
-// }
-// const result = await pageTitle.json();
-const appName = "testing";
-
-if (Astro.request.method === "POST") {
-  try {
-    const data = await Astro.request.formData();
-    const name = data.get("name");
-    const email = data.get("email");
-    const password = data.get("password");
-
-    if (!name || !email || !password) {
-      throw new Error("All fields are required.");
-    }
-
-    console.log("Registering user:", { name, email });
-    const result = await fetch("https://auth.guimox.dev/auth/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!result.ok) {
-      const errorResponse = await result.text(); // or result.json() if it returns JSON
-      console.error(`API Error (${result.status}):`, errorResponse);
-      throw new Error(`Registration failed: ${errorResponse}`);
-    }
-
-    const response = await result.json();
-    console.log("Success:", response);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
-  }
-}
 ---
 
 <section class="bg-gray-50 h-full dark:bg-gray-900">
@@ -66,7 +25,10 @@ if (Astro.request.method === "POST") {
         >
           Welcome back
         </h1>
-        <form class="space-y-4 md:space-y-6" action="#">
+
+        <div id="message" class="hidden"></div>
+
+        <form id="loginForm" class="space-y-4 md:space-y-6">
           <div>
             <label
               for="email"
@@ -79,7 +41,7 @@ if (Astro.request.method === "POST") {
               id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-gray-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="name@provider.com"
-              required=""
+              required
             />
           </div>
           <div>
@@ -94,17 +56,18 @@ if (Astro.request.method === "POST") {
               id="password"
               placeholder="••••••••"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-gray-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
+              required
             />
           </div>
           <button
             type="submit"
-            class="w-full hover:opacity-75 cursor-pointer text-white bg-black hover:bg-gray700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded text-sm px-5 py-3 text-center dark:bg-gray600 dark:hover:bg-gray700 dark:focus:ring-gray-800"
+            id="loginButton"
+            class="w-full hover:opacity-75 cursor-pointer text-white bg-black hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded text-sm px-5 py-3 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >Login</button
           >
           <ButtonGoogle />
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-            Don’t have an account yet? <a
+            Don't have an account yet? <a
               href="/register"
               class="font-medium underline text-primary-600 hover:underline dark:text-primary-500"
               >Sign up</a
@@ -113,6 +76,74 @@ if (Astro.request.method === "POST") {
         </form>
       </div>
     </div>
-    <a href="guimox.dev" class="mt-8 underline">guimox.dev</a>
   </div>
+  <a href="guimox.dev" class="mt-8 underline">guimox.dev</a>
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("loginForm") as HTMLFormElement;
+    const button = document.getElementById("loginButton") as HTMLButtonElement;
+    const messageDiv = document.getElementById("message") as HTMLDivElement;
+
+    function showMessage(text: string | null, isError = false) {
+      messageDiv.textContent = text;
+      messageDiv.className = isError
+        ? "p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+        : "p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400";
+      messageDiv.classList.remove("hidden");
+    }
+
+    function hideMessage() {
+      messageDiv.classList.add("hidden");
+    }
+
+    form!.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      hideMessage();
+
+      button.disabled = true;
+      button.textContent = "Logging in...";
+
+      try {
+        const formData = new FormData(form);
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        console.log("Attempting login for:", email);
+
+        if (!email || !password) {
+          throw new Error("Email and password are required.");
+        }
+
+        const result = await fetch("http://localhost:8080/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, app: "guimox" }),
+        });
+
+        console.log("API response status:", result.status);
+
+        if (!result.ok) {
+          const errorResponse = await result.text();
+          console.error(`API Error (${result.status}):`, errorResponse);
+          throw new Error(`Login failed: ${errorResponse || "Unknown error"}`);
+        }
+
+        const response = await result.json();
+        console.log("Login successful:", response);
+
+        showMessage("Login successful! Redirecting...", false);
+      } catch (error) {
+        console.error("Login error:", error);
+        showMessage("error", true);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Login";
+      }
+    });
+  });
+</script>

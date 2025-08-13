@@ -1,8 +1,13 @@
 ---
+export const prerender = false;
+
 import Layout from "../layout/layout.astro";
 import LoginForm from "../sections/login-form.astro";
+
+const url = new URL(Astro.request.url);
+const subdomain = url.hostname.split(".")[0];
 ---
 
 <Layout>
-  <LoginForm />
+  <LoginForm app={subdomain} />
 </Layout>
